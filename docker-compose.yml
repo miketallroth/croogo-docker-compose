@@ -1,0 +1,34 @@
+version: "2.0"
+services:
+  memcache:
+    image: memcached:alpine
+    restart: always
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - ${PWD}/srv/redis:/data
+  php:
+    container_name: php
+    image: php/php:7.4.3-apache-buster
+    ports:
+      - "7480:80"
+      - "7443:443"
+    links:
+      - db
+    volumes:
+      - ${PWD}:/var/www/html
+    restart: always
+  db:
+    image: mysql:5.6
+    container_name: database
+    # ports:
+      # - 3306:3306
+    environment:
+      MYSQL_DATABASE: mysql_server
+      MYSQL_USER: croogo
+      MYSQL_PASSWORD: croogo
+      MYSQL_ROOT_PASSWORD: croogo
+    volumes:
+      - ${PWD}/srv/mysql:/var/lib/mysql
+    restart: always
